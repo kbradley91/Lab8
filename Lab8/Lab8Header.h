@@ -12,6 +12,7 @@ static int upORdown = 0; //0 means going up, 1 means going down
 static unsigned int reverbDelay = 1;
 void calcPosition();
 void moveDelay();
+interrupt void cpu_timer2_isr(void);
 
 interrupt void weirdThings_ISR(void);
 
@@ -33,11 +34,13 @@ static double bCoef[4] = {
 
 };
 
-static unsigned int dBuffer[1024];
-static unsigned int * dStart = &dBuffer[0];
-static unsigned int * dEnd = &dBuffer[1023];
-static unsigned int * currentPos = &dBuffer[0];
-static unsigned int * delayPos = &dBuffer[0];
+
+
+//static unsigned int dBuffer[1024];
+static unsigned int * dStart = (unsigned int*) 0x260000;
+static unsigned int * dEnd = (unsigned int*) 0x29FFFF;
+static unsigned int * currentPos = (unsigned int*) 0x260000;
+static unsigned int * delayPos = (unsigned int*) 0x260000;
 
 
 static unsigned int xArray[4];

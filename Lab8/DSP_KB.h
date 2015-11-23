@@ -9,10 +9,11 @@
 #define DSP_KB_H_
 
 static float samplingRate = 48000;
+static float samplingRate2 =100;
 #define SetCmdAddr() address = (unsigned int *)0x100000;
 #define SetDataAddr() address = (unsigned int*)0x100001;
 static unsigned int * address = (unsigned int *)0x100000;
-
+void SRAMwrite(unsigned int value);
 interrupt void ADC_isr(void);
 interrupt void DAC_isr(void);
 interrupt void interp_isr(void);
@@ -22,6 +23,7 @@ interrupt void audioEcho_isr(void);
 interrupt void reverb_isr(void);
 static unsigned int * outputPORT = (unsigned int *)0x4000;
 static unsigned int * SRAMaddress = 0x260000;
+
  //pointer for SRAM address
 static int a = 0; //variable for the timer interrupt vector change
 static int decimate = 0;

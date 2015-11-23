@@ -17,6 +17,12 @@ void init_xybuffers(){
 	}
 
 }
+interrupt void cpu_timer2_isr(void){
+	//test
+
+	moveDelay();
+
+}
 
 void calcPosition(){
 	delayPos = currentPos;
@@ -35,10 +41,10 @@ void calcPosition(){
 }
 void moveDelay(){
 
-	if(reverbDelay == 1023){
+	if(reverbDelay == 0xFF){
 		upORdown = 1;
 	}
-	else if(upORdown == 1){
+	if(upORdown == 1){
 		reverbDelay--;
 	}
 	else{
@@ -57,7 +63,7 @@ interrupt void weirdThings_ISR(void){
 	*currentPos = input;
 
 	calcPosition();
-	moveDelay();
+
 	unsigned long output;
 	unsigned int value2 = *delayPos;
 	output = (input+0.5*value2)/2;

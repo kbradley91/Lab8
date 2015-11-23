@@ -6,7 +6,9 @@
 #include "Lab8Header.h"
 
 
+
 unsigned long ISRvalue = &weirdThings_ISR;
+
 int main(void) {
 	
 	DisableDog();
@@ -17,6 +19,8 @@ int main(void) {
 	LCDclear();
 	initADC();
 	DAC_init();
+	SRAMwrite(0);
+	SRAMaddress = 0x260000;
 	init_xybuffers();
 	timerINIT(ISRvalue, samplingRate);
 	while(1){
@@ -25,4 +29,3 @@ int main(void) {
 
 	return 0;
 }
-

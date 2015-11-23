@@ -1,7 +1,7 @@
 #include <DSP28x_Project.h>
 #include "DSP_KB.h"
 #include "string.h"
-
+#include "Lab8Header.h"
 
 /* Digital Mixing:
  *
@@ -11,6 +11,21 @@
  *
  * TODO: this code is a little messy and could probably be cleaned up.
  */
+
+
+void SRAMwrite(unsigned int value){
+	SRAMaddress = 0x200000; //reintializing value just in case
+
+	while(SRAMaddress != 0x2FFFFF){
+
+		*SRAMaddress = value;
+		SRAMaddress++;
+
+	}
+
+	SRAMaddress = 0x260000; //reintializing value just in case
+
+}
 
 interrupt void monstermash_isr(void){
 	EALLOW;
@@ -330,7 +345,7 @@ void timerINIT(unsigned long ISRlocation, float samplingRate){
 	   EALLOW;  // This is needed to write to EALLOW protected registers
 	 // PieVectTable.TINT0 = &cpu_timer0_isr;
 	   PieVectTable.XINT13 =ISRlocation;
-	  //PieVectTable.TINT2 = &cpu_timer2_isr;
+	  PieVectTable.TINT2 = &cpu_timer2_isr;
 	   EDIS;    // This is needed to disable write to EALLOW protected registers
 
 	// Step 4. Initialize the Device Peripheral. This function can be
@@ -344,7 +359,7 @@ void timerINIT(unsigned long ISRlocation, float samplingRate){
 
   // ConfigCpuTimer(&CpuTimer0, 150, 1000000);
    ConfigCpuTimer(&CpuTimer1, 150, 1000000*1/samplingRate*.5); //1/10000 is the frequency we want to toggle timer1 to interrupt
-   //ConfigCpuTimer(&CpuTimer2, 150, 1000000);
+   ConfigCpuTimer(&CpuTimer2, 150, 1000000*1/samplingRate2*.5);
 
 
 
@@ -355,7 +370,7 @@ void timerINIT(unsigned long ISRlocation, float samplingRate){
 
 	  // CpuTimer0Regs.TCR.all = 0x4001; // Use write-only instruction to set TSS bit = 0
 	   CpuTimer1Regs.TCR.all = 0x4001; // Use write-only instruction to set TSS bit = 0
-	   //CpuTimer2Regs.TCR.all = 0x4001; // Use write-only instruction to set TSS bit = 0
+	   CpuTimer2Regs.TCR.all = 0x4001; // Use write-only instruction to set TSS bit = 0
 
 	// Step 5. User specific code, enable interrupts:
 
@@ -364,8 +379,8 @@ void timerINIT(unsigned long ISRlocation, float samplingRate){
 	// which is connected to CPU-Timer 1, and CPU int 14, which is connected
 	// to CPU-Timer 2:
 	   //IER |= M_INT1;
-	   IER |= M_INT13;
-	   //IER |= M_INT14;
+	   IER |= M_INT13 | M_INT14;;
+
 
 	// Enable TINT0 in the PIE: Group 1 interrupt 7
 	   PieCtrlRegs.PIEIER1.bit.INTx7 = 1;
