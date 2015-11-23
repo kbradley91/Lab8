@@ -17,7 +17,56 @@ void init_xybuffers(){
 	}
 
 }
+
+void calcPosition(){
+	delayPos = currentPos;
+	delayPos = delayPos - reverbDelay;
+
+	if(delayPos < dStart){
+
+		unsigned int distance = dStart - delayPos; //how far under dStart delayPos is
+		delayPos = dEnd - distance;
+
+	}
+
+
+
+
+}
+void moveDelay(){
+
+	if(reverbDelay == 1023){
+		upORdown = 1;
+	}
+	else if(upORdown == 1){
+		reverbDelay--;
+	}
+	else{
+		reverbDelay++;
+	}
+
+	if(reverbDelay == 0){
+		upORdown = 0;
+		reverbDelay = 1;
+	}
+
+}
+
 interrupt void weirdThings_ISR(void){
+	unsigned int input = ADC_get();
+	*currentPos = input;
+
+	calcPosition();
+	moveDelay();
+	unsigned long output;
+	unsigned int value2 = *delayPos;
+	output = (input+0.5*value2)/2;
+	DAC_set((unsigned int)output);
+	currentPos++;
+	if(currentPos > dEnd){
+		currentPos = dStart;
+	}
+
 
 
 
